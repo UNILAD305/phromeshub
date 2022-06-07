@@ -15,6 +15,11 @@ local screeneffects = true
 local onsoundid = "rbxassetid://3458247742"
 local offsoundid = "rbxassetid://9114480705"
 
+--keybinds
+local toggleesp = Enum.KeyCode.N
+local togglerefresh = Enum.KeyCode.M
+local refresh = Enum.KeyCode.B
+
 
 local addednames = { --PUT PLAYERS/NPCS HERE IF YOU WANT THEM TO SHOW DIFFERENTLY, WILL NOT WORK IF YOU HAVE THAT PERSON FRIENDED.
 	"Player1",
@@ -252,13 +257,11 @@ local function getridof()
 end
 
 local on = false
+local refresha = true
 
 uis.InputBegan:Connect(function(ga,gaaa,gagaaa)
-	if ga.KeyCode == Enum.KeyCode.T  then
+	if ga.KeyCode == toggleesp  then
 		if on then
-			--[[for i, val in pairs(usinglist) do
-				print(val)
-			end]]
 			getridof()
 			on = false
 			if specialeffects then
@@ -272,9 +275,6 @@ uis.InputBegan:Connect(function(ga,gaaa,gagaaa)
 				}):Play();
 			end
 		else
-			--[[for i, val in pairs(usinglist) do
-				print(val)
-			end]]
 			spotalllivingthings()
 			on = true
 			if specialeffects then
@@ -289,10 +289,23 @@ uis.InputBegan:Connect(function(ga,gaaa,gagaaa)
 			end
 		end
 	end
+	if ga.KeyCode == togglerefresh then
+		if refresha then
+			refresha = false
+		else
+			refresha = true
+		end
+	end
+	if ga.KeyCode == refresha  then
+		if on then
+			spotalllivingthings()
+			print("Refreshed!")
+		end
+	end
 end)
 
 while wait(2) do
-	if on then
+	if on and refresha then
 		spotalllivingthings()
 	end
 end
