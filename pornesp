@@ -9,6 +9,9 @@ end
 
 --[[VALUES!!!]]
 
+local uis = game:GetService("UserInputService")
+local tween = game:GetService('TweenService')
+
 local specialeffects = true
 local screeneffects = true
 
@@ -16,14 +19,15 @@ local onsoundid = "rbxassetid://3458247742"
 local offsoundid = "rbxassetid://9114480705"
 
 --keybinds
-local toggleesp = Enum.KeyCode.N
-local togglerefresh = Enum.KeyCode.M
-local refresh = Enum.KeyCode.B
+local toggleesp = Enum.KeyCode.T
+local togglerefresh = Enum.KeyCode.O
+local refresh = Enum.KeyCode.P
+
+print("KeyBinds: Toggle Esp:"..uis:GetStringForKeyCode(toggleesp)..", Toggle Refresh:"..uis:GetStringForKeyCode(togglerefresh)..", Refresh Esp:"..uis:GetStringForKeyCode(refresh)..".")
 
 
 local addednames = { --PUT PLAYERS/NPCS HERE IF YOU WANT THEM TO SHOW DIFFERENTLY, WILL NOT WORK IF YOU HAVE THAT PERSON FRIENDED.
 	"Player1",
-	"buaha",
 }
 
 	--[[COLORS]]
@@ -37,8 +41,6 @@ local NPCColor = Color3.fromRGB(255, 0, 0)
 
 --[[---------]]
 
-local uis = game:GetService("UserInputService")
-local tween = game:GetService('TweenService')
 
 if not _G.Playerlist then
 	_G.Playerlist = {}
@@ -89,7 +91,7 @@ local function makegui(part, color)
 		textlabel.Name = "Text"
 		textlabel.BackgroundTransparency = 1
 		textlabel.Size = UDim2.new(1,0,1,0)
-		textlabel.Font = Enum.Font.Code
+		textlabel.Font = Enum.Font.Roboto
 		textlabel.LineHeight = 1
 		textlabel.MaxVisibleGraphemes = -1
 		if part:FindFirstChildWhichIsA("Humanoid").DisplayName ~= part.Name and part:FindFirstChildWhichIsA("Humanoid").DisplayName ~= "" then
@@ -136,6 +138,8 @@ local function spotalllivingthings()
 								local hr = v_:FindFirstChild("HumanoidRootPart")
 								if not hr:FindFirstChild("Name") then
 									makegui(v_, FriendColor)
+								elseif hr:FindFirstChild("Name") then
+									hr:FindFirstChild("Name").Enabled = true
 								end
 							end
 						elseif table.find(addednames, v_.Name) and not game.Players:GetPlayerFromCharacter(v_):IsFriendsWith(game.Players.LocalPlayer.UserId) then
@@ -159,6 +163,8 @@ local function spotalllivingthings()
 								local hr = v_:FindFirstChild("HumanoidRootPart")
 								if not hr:FindFirstChild("Name") then
 									makegui(v_, AddedPlayerColor)
+								elseif hr:FindFirstChild("Name") then
+									hr:FindFirstChild("Name").Enabled = true
 								end
 							end
 						elseif not table.find(usinglist, v_.Name) and not game.Players:GetPlayerFromCharacter(v_):IsFriendsWith(game.Players.LocalPlayer.UserId) then
@@ -182,6 +188,8 @@ local function spotalllivingthings()
 								local hr = v_:FindFirstChild("HumanoidRootPart")
 								if not hr:FindFirstChild("Name") then
 									makegui(v_, PlayerColor)
+								elseif hr:FindFirstChild("Name") then
+									hr:FindFirstChild("Name").Enabled = true
 								end
 							end
 						end
@@ -207,6 +215,8 @@ local function spotalllivingthings()
 								local hr = v_:FindFirstChild("HumanoidRootPart")
 								if not hr:FindFirstChild("Name") then
 									makegui(v_, AddedPlayerColor)
+								elseif hr:FindFirstChild("Name") then
+									hr:FindFirstChild("Name").Enabled = true
 								end
 							end
 						else
@@ -230,11 +240,16 @@ local function spotalllivingthings()
 								local hr = v_:FindFirstChild("HumanoidRootPart")
 								if not hr:FindFirstChild("Name") then
 									makegui(v_, NPCColor)
+								elseif hr:FindFirstChild("Name") then
+									hr:FindFirstChild("Name").Enabled = true
 								end
 							end
 						end
 					end
 				end
+			else
+				local hi = v_:FindFirstChildWhichIsA("Highlight")
+				hi.Enabled = true
 			end
 		end
 	end
@@ -244,12 +259,13 @@ local function getridof()
 	for i_,v_ in pairs(workspace:GetDescendants()) do
 		if v_:FindFirstChildWhichIsA("Humanoid") then
 			if v_:FindFirstChildWhichIsA("Highlight") then
-				v_:FindFirstChildWhichIsA("Highlight"):Destroy()
+				local hi = v_:FindFirstChildWhichIsA("Highlight")
+				hi.Enabled = false
 			end
 			if v_:FindFirstChild("HumanoidRootPart") then
 				local hrp = v_:FindFirstChild("HumanoidRootPart")
 				if hrp:FindFirstChildWhichIsA("BillboardGui") then
-					hrp:FindFirstChildWhichIsA("BillboardGui"):Destroy()
+					hrp:FindFirstChildWhichIsA("BillboardGui").Enabled = false
 				end
 			end
 		end
@@ -292,8 +308,10 @@ uis.InputBegan:Connect(function(ga,gaaa,gagaaa)
 	if ga.KeyCode == togglerefresh then
 		if refresha then
 			refresha = false
+			print("Refreshing Turned Off.")
 		else
 			refresha = true
+			print("Refreshing Turned On.")
 		end
 	end
 	if ga.KeyCode == refresh  then
