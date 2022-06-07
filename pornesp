@@ -16,9 +16,9 @@ local onsoundid = "rbxassetid://3458247742"
 local offsoundid = "rbxassetid://9114480705"
 
 --keybinds
-local toggleesp = Enum.KeyCode.N
-local togglerefresh = Enum.KeyCode.M
-local refresh = Enum.KeyCode.B
+local toggleesp = Enum.KeyCode.B
+local togglerefresh = Enum.KeyCode.N
+local refresh = Enum.KeyCode.M
 
 
 local addednames = { --PUT PLAYERS/NPCS HERE IF YOU WANT THEM TO SHOW DIFFERENTLY, WILL NOT WORK IF YOU HAVE THAT PERSON FRIENDED.
