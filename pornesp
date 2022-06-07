@@ -30,14 +30,14 @@ local addednames = { --PUT PLAYERS/NPCS HERE IF YOU WANT THEM TO SHOW DIFFERENTL
 	"Player1",
 }
 
-	--[[COLORS]]
+--[[COLORS]]
 local screencolor = Color3.fromRGB(255, 174, 153) --set to COMPLETE white if you want no effect on the screen
 
 local FriendColor = Color3.fromRGB(17, 255, 0)
 local AddedPlayerColor = Color3.fromRGB(255, 0, 243)
 local PlayerColor = Color3.fromRGB(0, 209, 255)
 local NPCColor = Color3.fromRGB(255, 0, 0)
-	--[[------]]
+--[[------]]
 
 --[[---------]]
 
@@ -80,7 +80,7 @@ local function makegui(part, color)
 	spawn(function()
 		billboard.AlwaysOnTop = true
 		billboard.Enabled = true
-		billboard.Name = "Name"
+		billboard.Name = "NameGui"
 		billboard.MaxDistance = 9999999
 		billboard.Size = UDim2.new(10,0,2,0)
 		billboard.StudsOffset = Vector3.new(0,3.5,0)
@@ -114,6 +114,10 @@ end
 local function spotalllivingthings()
 	for i_,v_ in pairs(workspace:GetDescendants()) do
 		if v_:FindFirstChildWhichIsA("Humanoid") and v_:FindFirstChild("HumanoidRootPart") and v_:IsA("Model") then
+			local hr = v_:FindFirstChild("HumanoidRootPart")
+			if hr:FindFirstChildWhichIsA("BillboardGui") then
+				hr:FindFirstChildWhichIsA("BillboardGui").Enabled = true
+			end
 			if not v_:FindFirstChildWhichIsA("Highlight") then
 				if v_ ~= game.Players.LocalPlayer.Character and not table.find(blacklistedname, v_.Name) then
 					if game.Players:GetPlayerFromCharacter(v_) then
@@ -136,10 +140,8 @@ local function spotalllivingthings()
 							hightlight.Adornee = v_
 							if v_:FindFirstChild("HumanoidRootPart") then
 								local hr = v_:FindFirstChild("HumanoidRootPart")
-								if not hr:FindFirstChild("Name") then
+								if not hr:FindFirstChild("NameGui") then
 									makegui(v_, FriendColor)
-								elseif hr:FindFirstChild("Name") then
-									hr:FindFirstChild("Name").Enabled = true
 								end
 							end
 						elseif table.find(addednames, v_.Name) and not game.Players:GetPlayerFromCharacter(v_):IsFriendsWith(game.Players.LocalPlayer.UserId) then
@@ -161,10 +163,8 @@ local function spotalllivingthings()
 							hightlight.Adornee = v_
 							if v_:FindFirstChild("HumanoidRootPart") then
 								local hr = v_:FindFirstChild("HumanoidRootPart")
-								if not hr:FindFirstChild("Name") then
+								if not hr:FindFirstChild("NameGui") then
 									makegui(v_, AddedPlayerColor)
-								elseif hr:FindFirstChild("Name") then
-									hr:FindFirstChild("Name").Enabled = true
 								end
 							end
 						elseif not table.find(usinglist, v_.Name) and not game.Players:GetPlayerFromCharacter(v_):IsFriendsWith(game.Players.LocalPlayer.UserId) then
@@ -186,10 +186,8 @@ local function spotalllivingthings()
 							hightlight.Adornee = v_
 							if v_:FindFirstChild("HumanoidRootPart") then
 								local hr = v_:FindFirstChild("HumanoidRootPart")
-								if not hr:FindFirstChild("Name") then
+								if not hr:FindFirstChild("NameGui") then
 									makegui(v_, PlayerColor)
-								elseif hr:FindFirstChild("Name") then
-									hr:FindFirstChild("Name").Enabled = true
 								end
 							end
 						end
@@ -213,10 +211,8 @@ local function spotalllivingthings()
 							hightlight.Adornee = v_
 							if v_:FindFirstChild("HumanoidRootPart") then
 								local hr = v_:FindFirstChild("HumanoidRootPart")
-								if not hr:FindFirstChild("Name") then
+								if not hr:FindFirstChild("NameGui") then
 									makegui(v_, AddedPlayerColor)
-								elseif hr:FindFirstChild("Name") then
-									hr:FindFirstChild("Name").Enabled = true
 								end
 							end
 						else
@@ -238,10 +234,8 @@ local function spotalllivingthings()
 							hightlight.Adornee = v_
 							if v_:FindFirstChild("HumanoidRootPart") then
 								local hr = v_:FindFirstChild("HumanoidRootPart")
-								if not hr:FindFirstChild("Name") then
+								if not hr:FindFirstChild("NameGui") then
 									makegui(v_, NPCColor)
-								elseif hr:FindFirstChild("Name") then
-									hr:FindFirstChild("Name").Enabled = true
 								end
 							end
 						end
@@ -265,7 +259,8 @@ local function getridof()
 			if v_:FindFirstChild("HumanoidRootPart") then
 				local hrp = v_:FindFirstChild("HumanoidRootPart")
 				if hrp:FindFirstChildWhichIsA("BillboardGui") then
-					hrp:FindFirstChildWhichIsA("BillboardGui").Enabled = false
+					local bill = hrp:FindFirstChildWhichIsA("BillboardGui")
+					bill.Enabled = false
 				end
 			end
 		end
