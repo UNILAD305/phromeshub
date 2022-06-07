@@ -27,12 +27,18 @@ local offsoundid = "rbxassetid://9114480705"
 local toggleesp = Enum.KeyCode.T
 local togglerefresh = Enum.KeyCode.M
 local refresh = Enum.KeyCode.N
+local showkeys = Enum.KeyCode.P
 
 spawn(function()
 	wait(1)
 	StarterGui:SetCore("SendNotification", {
 		Title = "Keybinds";
 		Text = "KeyBinds: Toggle Esp: "..uis:GetStringForKeyCode(toggleesp)..", Toggle Refresh: "..uis:GetStringForKeyCode(togglerefresh)..", Refresh Esp: "..uis:GetStringForKeyCode(refresh).."."
+	})
+	wait(0.5)
+	StarterGui:SetCore("SendNotification", {
+		Title = "Keybinds";
+		Text = "To show the keybinds once more, press: "..uis:GetStringForKeyCode(showkeys)
 	})
 end)
 
@@ -344,6 +350,12 @@ uis.InputBegan:Connect(function(ga,gaaa,gagaaa)
 				Text = "Refreshed Manually."
 			})
 		end
+	end
+	if ga.KeyCode == showkeys then
+		StarterGui:SetCore("SendNotification", {
+			Title = "Keybinds";
+			Text = "KeyBinds: Toggle Esp: "..uis:GetStringForKeyCode(toggleesp)..", Toggle Refresh: "..uis:GetStringForKeyCode(togglerefresh)..", Refresh Esp: "..uis:GetStringForKeyCode(refresh).."."
+		})
 	end
 end)
 
