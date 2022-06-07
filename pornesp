@@ -1,16 +1,21 @@
+local uis = game:GetService("UserInputService")
+local tween = game:GetService('TweenService')
+local StarterGui = game:GetService("StarterGui")
+
 print("Waiting For Player Response. - Phromes's ESP")
 
 while wait(0.1) do
 	if game.Players.LocalPlayer.Character then
 		print("Success! - Phromes's ESP")
+		StarterGui:SetCore("SendNotification", {
+			Title = "Loaded!";
+			Text = "Esp Has Loaded."
+		})
 		break
 	end
 end 
 
 --[[VALUES!!!]]
-
-local uis = game:GetService("UserInputService")
-local tween = game:GetService('TweenService')
 
 local specialeffects = true
 local screeneffects = true
@@ -20,11 +25,16 @@ local offsoundid = "rbxassetid://9114480705"
 
 --keybinds
 local toggleesp = Enum.KeyCode.T
-local togglerefresh = Enum.KeyCode.O
-local refresh = Enum.KeyCode.P
+local togglerefresh = Enum.KeyCode.M
+local refresh = Enum.KeyCode.N
 
-print("KeyBinds: Toggle Esp:"..uis:GetStringForKeyCode(toggleesp)..", Toggle Refresh:"..uis:GetStringForKeyCode(togglerefresh)..", Refresh Esp:"..uis:GetStringForKeyCode(refresh)..".")
-
+spawn(function()
+	wait(1)
+	StarterGui:SetCore("SendNotification", {
+		Title = "Keybinds";
+		Text = "KeyBinds: Toggle Esp: "..uis:GetStringForKeyCode(toggleesp)..", Toggle Refresh: "..uis:GetStringForKeyCode(togglerefresh)..", Refresh Esp: "..uis:GetStringForKeyCode(refresh).."."
+	})
+end)
 
 local addednames = { --PUT PLAYERS/NPCS HERE IF YOU WANT THEM TO SHOW DIFFERENTLY, WILL NOT WORK IF YOU HAVE THAT PERSON FRIENDED.
 	"Player1",
@@ -275,6 +285,10 @@ uis.InputBegan:Connect(function(ga,gaaa,gagaaa)
 		if on then
 			getridof()
 			on = false
+			StarterGui:SetCore("SendNotification", {
+				Title = "ESP";
+				Text = "Turned Off."
+			})
 			if specialeffects then
 				offsound:Play()
 			end
@@ -288,6 +302,10 @@ uis.InputBegan:Connect(function(ga,gaaa,gagaaa)
 		else
 			spotalllivingthings()
 			on = true
+			StarterGui:SetCore("SendNotification", {
+				Title = "ESP";
+				Text = "Turned On."
+			})
 			if specialeffects then
 				onsound:Play()
 			end
@@ -304,21 +322,35 @@ uis.InputBegan:Connect(function(ga,gaaa,gagaaa)
 		if refresha then
 			refresha = false
 			print("Refreshing Turned Off.")
+			StarterGui:SetCore("SendNotification", {
+				Title = "ESP";
+				Text = "Refreshing Turned Off."
+			})
 		else
 			refresha = true
 			print("Refreshing Turned On.")
+			StarterGui:SetCore("SendNotification", {
+				Title = "ESP";
+				Text = "Refreshing Turned On."
+			})
 		end
 	end
-	if ga.KeyCode == refresh  then
+	if ga.KeyCode == refresh then
 		if on then
 			spotalllivingthings()
 			print("Refreshed!")
+			StarterGui:SetCore("SendNotification", {
+				Title = "ESP";
+				Text = "Refreshed Manually."
+			})
 		end
 	end
 end)
 
-while wait(2) do
-	if on and refresha then
-		spotalllivingthings()
+spawn(function()
+	while wait(2) do
+		if on and refresha then
+			spotalllivingthings()
+		end
 	end
-end
+end)
