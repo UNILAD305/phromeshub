@@ -131,8 +131,8 @@ local function spotalllivingthings()
 	for i_,v_ in pairs(workspace:GetDescendants()) do
 		if v_:FindFirstChildWhichIsA("Humanoid") and v_:FindFirstChild("HumanoidRootPart") and v_:IsA("Model") then
 			local hr = v_:FindFirstChild("HumanoidRootPart")
-			if hr:FindFirstChildWhichIsA("BillboardGui") then
-				hr:FindFirstChildWhichIsA("BillboardGui").Enabled = true
+			if hr:FindFirstChild("NameGui") then
+				hr:FindFirstChild("NameGui").Enabled = true
 			end
 			if not v_:FindFirstChildWhichIsA("Highlight") then
 				if v_ ~= game.Players.LocalPlayer.Character and not table.find(blacklistedname, v_.Name) then
@@ -274,8 +274,8 @@ local function getridof()
 			end
 			if v_:FindFirstChild("HumanoidRootPart") then
 				local hrp = v_:FindFirstChild("HumanoidRootPart")
-				if hrp:FindFirstChildWhichIsA("BillboardGui") then
-					local bill = hrp:FindFirstChildWhichIsA("BillboardGui")
+				if hrp:FindFirstChild("NameGui") then
+					local bill = hrp:FindFirstChild("NameGui")
 					bill.Enabled = false
 				end
 			end
