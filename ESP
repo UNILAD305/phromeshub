@@ -1,0 +1,298 @@
+print("Waiting For Player Response. - Phromes's ESP")
+
+while wait(0.1) do
+	if game.Players.LocalPlayer.Character then
+		print("Success! - Phromes's ESP")
+		break
+	end
+end 
+
+--[[VALUES!!!]]
+
+local specialeffects = true
+local screeneffects = true
+
+local onsoundid = "rbxassetid://3458247742"
+local offsoundid = "rbxassetid://9114480705"
+
+
+local addednames = { --PUT PLAYERS/NPCS HERE IF YOU WANT THEM TO SHOW DIFFERENTLY, WILL NOT WORK IF YOU HAVE THAT PERSON FRIENDED.
+	"Player1",
+	"buaha",
+}
+
+	--[[COLORS]]
+local screencolor = Color3.fromRGB(255, 174, 153) --set to COMPLETE white if you want no effect on the screen
+
+local FriendColor = Color3.fromRGB(17, 255, 0)
+local AddedPlayerColor = Color3.fromRGB(255, 0, 243)
+local PlayerColor = Color3.fromRGB(0, 209, 255)
+local NPCColor = Color3.fromRGB(255, 0, 0)
+	--[[------]]
+
+--[[---------]]
+
+local uis = game:GetService("UserInputService")
+local tween = game:GetService('TweenService')
+
+if not _G.Playerlist then
+	_G.Playerlist = {}
+end
+
+local usinglist = _G.Playerlist
+if not table.find(usinglist, game.Players.LocalPlayer.Character.Name) then
+	table.insert(usinglist, game.Players.LocalPlayer.Character.Name)
+end
+
+local blacklistedname = {
+	"ViewModel",
+}
+
+local onsound
+local offsound
+local color
+
+if not workspace:FindFirstChild("ThermSounds") and specialeffects then
+	local fold = Instance.new("Folder", workspace)
+	fold.Name = "ThermSounds"
+	onsound = Instance.new("Sound", fold)
+	onsound.SoundId = onsoundid
+	onsound.Volume = 1
+	offsound = Instance.new("Sound", fold)
+	offsound.SoundId = offsoundid
+	offsound.Volume = 1
+end
+
+if screeneffects then
+	color = Instance.new("ColorCorrectionEffect", game.Lighting)
+	color.Name = "ThermCCE"
+end
+
+local function makegui(part, color)
+	local billboard = Instance.new("BillboardGui", part:FindFirstChild("HumanoidRootPart"))
+	spawn(function()
+		billboard.AlwaysOnTop = true
+		billboard.Enabled = true
+		billboard.Name = "Name"
+		billboard.MaxDistance = 9999999
+		billboard.Size = UDim2.new(10,0,2,0)
+		billboard.StudsOffset = Vector3.new(0,3.5,0)
+		billboard.ZIndexBehavior = Enum.ZIndexBehavior.Global
+	end)
+	local textlabel = Instance.new("TextLabel", billboard)
+	spawn(function()
+		textlabel.Name = "Text"
+		textlabel.BackgroundTransparency = 1
+		textlabel.Size = UDim2.new(1,0,1,0)
+		textlabel.Font = Enum.Font.Code
+		textlabel.LineHeight = 1
+		textlabel.MaxVisibleGraphemes = -1
+		if part:FindFirstChildWhichIsA("Humanoid").DisplayName ~= part.Name and part:FindFirstChildWhichIsA("Humanoid").DisplayName ~= "" then
+			textlabel.Text = part:FindFirstChildWhichIsA("Humanoid").DisplayName.."(@"..part.Name..")"
+		else
+			textlabel.Text = "@"..part.Name
+		end
+		textlabel.TextColor3 = color
+		textlabel.TextStrokeColor3 = color
+		textlabel.TextScaled = true
+		textlabel.RichText = true
+		textlabel.TextSize = 18
+		textlabel.TextStrokeTransparency = 1
+		textlabel.TextXAlignment = Enum.TextXAlignment.Center
+		textlabel.TextYAlignment = Enum.TextYAlignment.Center
+	end)
+
+end
+
+local function spotalllivingthings()
+	for i_,v_ in pairs(workspace:GetDescendants()) do
+		if v_:FindFirstChildWhichIsA("Humanoid") and v_:FindFirstChild("HumanoidRootPart") and v_:IsA("Model") then
+			if not v_:FindFirstChildWhichIsA("Highlight") then
+				if v_ ~= game.Players.LocalPlayer.Character and not table.find(blacklistedname, v_.Name) then
+					if game.Players:GetPlayerFromCharacter(v_) then
+						if game.Players:GetPlayerFromCharacter(v_):IsFriendsWith(game.Players.LocalPlayer.UserId) then
+							local hightlight = Instance.new("Highlight")
+							local color1 = Color3.fromRGB(38, 255, 0);
+							local color2 = Color3.fromRGB(255, 0, 0);
+							local hum = v_:FindFirstChildWhichIsA("Humanoid")
+							hightlight.FillColor = FriendColor
+							--[[spawn(function()
+								local r = game:GetService("RunService").RenderStepped:Connect(function()
+									local newcolor
+									hightlight.FillColor = color2:lerp(color1, hum.Health/hum.MaxHealth);
+								end)
+							end)]]
+							hightlight.OutlineColor = FriendColor
+							hightlight.FillTransparency = 0.5
+							hightlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+							hightlight.Parent = v_
+							hightlight.Adornee = v_
+							if v_:FindFirstChild("HumanoidRootPart") then
+								local hr = v_:FindFirstChild("HumanoidRootPart")
+								if not hr:FindFirstChild("Name") then
+									makegui(v_, FriendColor)
+								end
+							end
+						elseif table.find(addednames, v_.Name) and not game.Players:GetPlayerFromCharacter(v_):IsFriendsWith(game.Players.LocalPlayer.UserId) then
+							local hightlight = Instance.new("Highlight")
+							local color1 = Color3.fromRGB(38, 255, 0);
+							local color2 = Color3.fromRGB(255, 0, 0);
+							local hum = v_:FindFirstChildWhichIsA("Humanoid")
+							hightlight.FillColor = AddedPlayerColor
+							--[[spawn(function()
+								local r = game:GetService("RunService").RenderStepped:Connect(function()
+									local newcolor
+									hightlight.FillColor = color2:lerp(color1, hum.Health/hum.MaxHealth);
+								end)
+							end)]]
+							hightlight.OutlineColor = AddedPlayerColor
+							hightlight.FillTransparency = 0.5
+							hightlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+							hightlight.Parent = v_
+							hightlight.Adornee = v_
+							if v_:FindFirstChild("HumanoidRootPart") then
+								local hr = v_:FindFirstChild("HumanoidRootPart")
+								if not hr:FindFirstChild("Name") then
+									makegui(v_, AddedPlayerColor)
+								end
+							end
+						elseif not table.find(usinglist, v_.Name) and not game.Players:GetPlayerFromCharacter(v_):IsFriendsWith(game.Players.LocalPlayer.UserId) then
+							local hightlight = Instance.new("Highlight")
+							local color1 = Color3.fromRGB(38, 255, 0);
+							local color2 = Color3.fromRGB(255, 0, 0);
+							local hum = v_:FindFirstChildWhichIsA("Humanoid")
+							hightlight.FillColor = PlayerColor
+							--[[spawn(function()
+								local r = game:GetService("RunService").RenderStepped:Connect(function()
+									local newcolor
+									hightlight.FillColor = color2:lerp(color1, hum.Health/hum.MaxHealth);
+								end)
+							end)]]
+							hightlight.OutlineColor = PlayerColor
+							hightlight.FillTransparency = 0.5
+							hightlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+							hightlight.Parent = v_
+							hightlight.Adornee = v_
+							if v_:FindFirstChild("HumanoidRootPart") then
+								local hr = v_:FindFirstChild("HumanoidRootPart")
+								if not hr:FindFirstChild("Name") then
+									makegui(v_, PlayerColor)
+								end
+							end
+						end
+					else
+						if table.find(addednames, v_.Name) then
+							local hightlight = Instance.new("Highlight")
+							local color1 = Color3.fromRGB(38, 255, 0);
+							local color2 = Color3.fromRGB(255, 0, 0);
+							local hum = v_:FindFirstChildWhichIsA("Humanoid")
+							hightlight.FillColor = AddedPlayerColor
+							--[[spawn(function()
+								local r = game:GetService("RunService").RenderStepped:Connect(function()
+									local newcolor
+									hightlight.FillColor = color2:lerp(color1, hum.Health/hum.MaxHealth);
+								end)
+							end)]]
+							hightlight.OutlineColor = AddedPlayerColor
+							hightlight.FillTransparency = 0.5
+							hightlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+							hightlight.Parent = v_
+							hightlight.Adornee = v_
+							if v_:FindFirstChild("HumanoidRootPart") then
+								local hr = v_:FindFirstChild("HumanoidRootPart")
+								if not hr:FindFirstChild("Name") then
+									makegui(v_, AddedPlayerColor)
+								end
+							end
+						else
+							local hightlight = Instance.new("Highlight")
+							local color1 = Color3.fromRGB(38, 255, 0);
+							local color2 = Color3.fromRGB(255, 0, 0);
+							local hum = v_:FindFirstChildWhichIsA("Humanoid")
+							hightlight.FillColor = NPCColor
+						--[[spawn(function()
+							local r = game:GetService("RunService").RenderStepped:Connect(function()
+								local newcolor
+								hightlight.FillColor = color2:lerp(color1, hum.Health/hum.MaxHealth);
+							end)
+						end)]]
+							hightlight.OutlineColor = NPCColor
+							hightlight.FillTransparency = 0.5
+							hightlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+							hightlight.Parent = v_
+							hightlight.Adornee = v_
+							if v_:FindFirstChild("HumanoidRootPart") then
+								local hr = v_:FindFirstChild("HumanoidRootPart")
+								if not hr:FindFirstChild("Name") then
+									makegui(v_, NPCColor)
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
+local function getridof()
+	for i_,v_ in pairs(workspace:GetDescendants()) do
+		if v_:FindFirstChildWhichIsA("Humanoid") then
+			if v_:FindFirstChildWhichIsA("Highlight") then
+				v_:FindFirstChildWhichIsA("Highlight"):Destroy()
+			end
+			if v_:FindFirstChild("HumanoidRootPart") then
+				local hrp = v_:FindFirstChild("HumanoidRootPart")
+				if hrp:FindFirstChildWhichIsA("BillboardGui") then
+					hrp:FindFirstChildWhichIsA("BillboardGui"):Destroy()
+				end
+			end
+		end
+	end
+end
+
+local on = false
+
+uis.InputBegan:Connect(function(ga,gaaa,gagaaa)
+	if ga.KeyCode == Enum.KeyCode.T  then
+		if on then
+			--[[for i, val in pairs(usinglist) do
+				print(val)
+			end]]
+			getridof()
+			on = false
+			if specialeffects then
+				offsound:Play()
+			end
+			if screeneffects then
+				color.TintColor = Color3.fromRGB(255, 255, 255)
+				color.Brightness = -1
+				tween:Create(color, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+					Brightness = 0,
+				}):Play();
+			end
+		else
+			--[[for i, val in pairs(usinglist) do
+				print(val)
+			end]]
+			spotalllivingthings()
+			on = true
+			if specialeffects then
+				onsound:Play()
+			end
+			if screeneffects then
+				color.TintColor = screencolor
+				color.Brightness = -1
+				tween:Create(color, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+					Brightness = 0,
+				}):Play();
+			end
+		end
+	end
+end)
+
+while wait(2) do
+	if on then
+		spotalllivingthings()
+	end
+end
