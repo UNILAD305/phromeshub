@@ -18,7 +18,7 @@ end
 --[[VALUES!!!]]
 
 local specialeffects = true
-local screeneffects = true
+local screeneffects = false -- temporarily disabled since many people did not like it :*)
 
 local onsoundid = "rbxassetid://3458247742"
 local offsoundid = "rbxassetid://9114480705"
