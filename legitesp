@@ -151,7 +151,7 @@ local function spotalllivingthings()
 							end)]]
 							hightlight.OutlineColor = FriendColor
 							hightlight.FillTransparency = 1
-							hightlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+							hightlight.DepthMode = Enum.HighlightDepthMode.Occluded
 							hightlight.Parent = v_
 							hightlight.Adornee = v_
 							if v_:FindFirstChild("HumanoidRootPart") then
@@ -174,7 +174,7 @@ local function spotalllivingthings()
 							end)]]
 							hightlight.OutlineColor = AddedPlayerColor
 							hightlight.FillTransparency = 1
-							hightlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+							hightlight.DepthMode = Enum.HighlightDepthMode.Occluded
 							hightlight.Parent = v_
 							hightlight.Adornee = v_
 							if v_:FindFirstChild("HumanoidRootPart") then
@@ -197,7 +197,7 @@ local function spotalllivingthings()
 							end)]]
 							hightlight.OutlineColor = PlayerColor
 							hightlight.FillTransparency = 1
-							hightlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+							hightlight.DepthMode = Enum.HighlightDepthMode.Occluded
 							hightlight.Parent = v_
 							hightlight.Adornee = v_
 							if v_:FindFirstChild("HumanoidRootPart") then
@@ -222,7 +222,7 @@ local function spotalllivingthings()
 							end)]]
 							hightlight.OutlineColor = AddedPlayerColor
 							hightlight.FillTransparency = 1
-							hightlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+							hightlight.DepthMode = Enum.HighlightDepthMode.Occluded
 							hightlight.Parent = v_
 							hightlight.Adornee = v_
 							if v_:FindFirstChild("HumanoidRootPart") then
