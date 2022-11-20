@@ -150,7 +150,7 @@ local function spotalllivingthings()
 								end)
 							end)]]
 							hightlight.OutlineColor = FriendColor
-							hightlight.FillTransparency = 1
+							hightlight.FillTransparency = 0.6
 							hightlight.DepthMode = Enum.HighlightDepthMode.Occluded
 							hightlight.Parent = v_
 							hightlight.Adornee = v_
@@ -196,7 +196,7 @@ local function spotalllivingthings()
 								end)
 							end)]]
 							hightlight.OutlineColor = PlayerColor
-							hightlight.FillTransparency = 1
+							hightlight.FillTransparency = 0.6
 							hightlight.DepthMode = Enum.HighlightDepthMode.Occluded
 							hightlight.Parent = v_
 							hightlight.Adornee = v_
@@ -221,7 +221,7 @@ local function spotalllivingthings()
 								end)
 							end)]]
 							hightlight.OutlineColor = AddedPlayerColor
-							hightlight.FillTransparency = 1
+							hightlight.FillTransparency = 0.6
 							hightlight.DepthMode = Enum.HighlightDepthMode.Occluded
 							hightlight.Parent = v_
 							hightlight.Adornee = v_
