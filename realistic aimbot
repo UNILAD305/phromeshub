@@ -98,6 +98,10 @@ end)
 UI.InputBegan:Connect(function(ya, yya)
 	if not yya and ya.KeyCode == CameraSettings.togglekey then
 		CameraSettings.enabled = not CameraSettings.enabled
+		StarterGui:SetCore("SendNotification", {
+			Title = "Toggle";
+			Text = "Aimbot has been set to "..CameraSettings.enabled
+		})
 	end
 end)
 
