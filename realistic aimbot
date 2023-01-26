@@ -1,3 +1,9 @@
+while wait(0.1) do
+	if game.Players.LocalPlayer and game.Players.LocalPlayer.Character ~= nil then
+		break
+	end
+end
+
 --Client--
 
 local WP = game:GetService("Workspace")
@@ -40,11 +46,12 @@ local MouseDown = false
 local CTween = nil
 
 local Player = PY.LocalPlayer
+local Character = Player.Character
 local Mouse = Player:GetMouse()
 
 local Camera = workspace.CurrentCamera
 
-local list = {workspace.CurrentCamera, workspace.Terrain}
+local list = {Character ,workspace.CurrentCamera, workspace.Terrain}
 
 local raycastParams = RaycastParams.new()
 raycastParams.FilterDescendantsInstances = list
@@ -104,10 +111,17 @@ end)
 UI.InputBegan:Connect(function(ya, yya)
 	if not yya and ya.KeyCode == CameraSettings.togglekey then
 		CameraSettings.enabled = not CameraSettings.enabled
-		StarterGui:SetCore("SendNotification", {
-			Title = "Toggle";
-			Text = "Aimbot has been set to "..CameraSettings.enabled
-		})
+		if CameraSettings.enabled then
+			StarterGui:SetCore("SendNotification", {
+				Title = "Toggle";
+				Text = "Aimbot: true"
+			})
+		else
+			StarterGui:SetCore("SendNotification", {
+				Title = "Toggle";
+				Text = "Aimbot: false"
+			})
+		end
 	end
 end)
 
