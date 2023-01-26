@@ -44,10 +44,16 @@ local Mouse = Player:GetMouse()
 
 local Camera = workspace.CurrentCamera
 
-local list = {Player.Character, workspace.CurrentCamera, workspace.Terrain}
+local list = {workspace.CurrentCamera, workspace.Terrain}
 
 local raycastParams = RaycastParams.new()
+raycastParams.FilterDescendantsInstances = list
 raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+
+Player.CharacterAdded:Connect(function(char)
+	table.insert(list, char)
+	table.insert(list, workspace.CurrentCamera)
+end)
 
 local function GetClosestPlayer()
 	local Closest = {nil, nil}
@@ -65,11 +71,11 @@ local function GetClosestPlayer()
 				local castresult = workspace:Raycast(Camera.CFrame.Position, Direction, raycastParams)
 
 				if castresult then --Checks if the raycast hit anything
-					print("dufkcing")
+					--print("dufkcing")
 					local HitPart = castresult.Instance--This is the part the cast hit
-					print(HitPart)
+					--print(HitPart)
 					if HitPart.Transparency < 0.5 and HitPart:IsDescendantOf(Part.Parent) then
-						print("fafa")
+						--print("fafa")
 						if onScreen then
 							local Distance = (MousePos - Vector2.new(vector.X, vector.Y)).Magnitude
 							if Closest[1] == nil then Closest = {Distance, Player} continue end
