@@ -28,28 +28,38 @@ local StarterGui = game:GetService("StarterGui")
 
 local CameraSettings = {
 	tweening = true, --if tweening is false then the camera will instantly snap to the targets location
-	tweentime = 0.2,
-	accelerationprediction = 2,
+	tweentime = 6,
 	parttolockon = "Head",
-	distanceforlock = 350,
-	predictionmult = 9,
+	distanceforlock = 95,
+	predictionmult = 7,
+	imagetrans = 0.95,
 	enabled = true,
 	togglekey = Enum.KeyCode.Y,
 }
 
 StarterGui:SetCore("SendNotification", {
 	Title = "Loaded!";
-	Text = "Aimbot has loaded! Aimbot is on by default."
+	Text = "Aimbot has loaded! Aimbot is on by default. + Increase Tween Time, - Decrease Tween Time, [ Increase Prediction, ] Decrease Prediction."
 })
 
 local MouseDown = false
 local CTween = nil
+local Vis = true
 
 local Player = PY.LocalPlayer
 local Character = Player.Character
 local Mouse = Player:GetMouse()
 
 local Camera = workspace.CurrentCamera
+
+local GUI = Instance.new("ScreenGui", game.CoreGui)
+GUI.ResetOnSpawn = false
+local ImageLabel = Instance.new("ImageLabel", GUI)
+ImageLabel.Image = "rbxassetid://7185003058"
+ImageLabel.ImageTransparency = CameraSettings.imagetrans
+ImageLabel.Size = UDim2.new(0, ((CameraSettings.distanceforlock + 15) * 2), 0, ((CameraSettings.distanceforlock + 15) * 2))
+ImageLabel.BackgroundTransparency = 1
+ImageLabel.AnchorPoint = Vector2.new(0.5,0.5)
 
 local list = {Character ,workspace.CurrentCamera, workspace.Terrain}
 
@@ -65,15 +75,15 @@ end)
 local function GetClosestPlayer()
 	local Closest = {nil, nil}
 	local MousePos = Vector2.new(Mouse.X, Mouse.Y)
-	for _, Player in pairs(workspace:GetChildren()) do
+	for _, Player in pairs(PY.LocalPlayer.Character.Parent:GetChildren()) do
 		local Character = Player
 		if Character and Character ~= PY.LocalPlayer.Character then
 			local Part = Character:FindFirstChild(CameraSettings.parttolockon)
-			if Part then
+			if Part and Character:FindFirstChildWhichIsA("Humanoid") and Character:FindFirstChildWhichIsA("Humanoid").Health >= 0.1 then
 				local vector, onScreen = Camera:WorldToScreenPoint(Part.Position)
-				
+
 				local Direction = Part.Position - Camera.CFrame.Position
-				
+
 				raycastParams.FilterDescendantsInstances = list
 				local castresult = workspace:Raycast(Camera.CFrame.Position, Direction, raycastParams)
 
@@ -83,10 +93,10 @@ local function GetClosestPlayer()
 					--print(HitPart)
 					if HitPart.Transparency < 0.5 and HitPart:IsDescendantOf(Part.Parent) then
 						--print("fafa")
-						if onScreen then
-							local Distance = (MousePos - Vector2.new(vector.X, vector.Y)).Magnitude
+						local Distance = (MousePos - Vector2.new(vector.X, vector.Y)).Magnitude
+						if onScreen and Distance < CameraSettings.distanceforlock then
 							if Closest[1] == nil then Closest = {Distance, Player} continue end
-							if Distance < Closest[1] and Distance < CameraSettings.distanceforlock then
+							if Distance < Closest[1] then
 								Closest = {Distance, Player}
 							end
 						end
@@ -100,6 +110,86 @@ local function GetClosestPlayer()
 	return Closest
 end
 
+--[[
+local function GetClosestPlayer()
+	local Closest = {nil, nil}
+	local MousePos = Vector2.new(Mouse.X, Mouse.Y)
+	for _,Playerr in pairs(PY:GetPlayers()) do
+		local Characterr = Playerr.Character
+		if Character ~= game.Players.LocalPlayer.Character then
+			local Part = Characterr:FindFirstChild(CameraSettings.parttolockon)
+			if Part and Characterr:FindFirstChildWhichIsA("Humanoid") and Characterr:FindFirstChildWhichIsA("Humanoid").Health >= 0.1 then
+				local vector, onScreen = Camera:WorldToScreenPoint(Part.Position)
+
+				local Direction = Part.Position - Camera.CFrame.Position
+
+				raycastParams.FilterDescendantsInstances = list
+				local castresult = workspace:Raycast(Camera.CFrame.Position, Direction, raycastParams)
+
+				if castresult then --Checks if the raycast hit anything
+					--print("dufkcing")
+					local HitPart = castresult.Instance--This is the part the cast hit
+					--print(HitPart)
+					if HitPart.Transparency < 0.5 and HitPart:IsDescendantOf(Part.Parent) then
+						--print("fafa")
+						local Distance = (MousePos - Vector2.new(vector.X, vector.Y)).Magnitude
+						if onScreen and Distance < CameraSettings.distanceforlock then
+							if Closest[1] == nil then Closest = {Distance, Playerr} continue end
+							if Distance < Closest[1] then
+								Closest = {Distance, Playerr}
+							end
+						end
+					elseif HitPart.Transparency >= 0.5 and not table.find(list, HitPart.Name) then
+						table.insert(list, HitPart)
+					end
+				end
+			end
+		end
+	end
+	return Closest
+end
+]]
+
+--[[
+local function GetClosestPlayer()
+	local Closest = {nil, nil}
+	local MousePos = Vector2.new(Mouse.X, Mouse.Y)
+	for _, Player in pairs(workspace:GetDescendants()) do
+		local Character = Player
+		if Character and Character ~= PY.LocalPlayer.Character then
+			local Part = Character:FindFirstChild(CameraSettings.parttolockon)
+			if Part and Character:FindFirstChildWhichIsA("Humanoid") and Character:FindFirstChildWhichIsA("Humanoid").Health >= 0.1 then
+				local vector, onScreen = Camera:WorldToScreenPoint(Part.Position)
+				
+				local Direction = Part.Position - Camera.CFrame.Position
+				
+				raycastParams.FilterDescendantsInstances = list
+				local castresult = workspace:Raycast(Camera.CFrame.Position, Direction, raycastParams)
+
+				if castresult then --Checks if the raycast hit anything
+					--print("dufkcing")
+					local HitPart = castresult.Instance--This is the part the cast hit
+					--print(HitPart)
+					if HitPart.Transparency < 0.5 and HitPart:IsDescendantOf(Part.Parent) then
+						--print("fafa")
+						local Distance = (MousePos - Vector2.new(vector.X, vector.Y)).Magnitude
+						if onScreen and Distance < CameraSettings.distanceforlock then
+							if Closest[1] == nil then Closest = {Distance, Player} continue end
+							if Distance < Closest[1] then
+								Closest = {Distance, Player}
+							end
+						end
+					elseif HitPart.Transparency >= 0.5 and not table.find(list, HitPart.Name) then
+						table.insert(list, HitPart)
+					end
+				end
+			end
+		end
+	end
+	return Closest
+end
+]]
+
 Mouse.Button2Down:Connect(function()
 	MouseDown = true
 end)
@@ -109,18 +199,77 @@ Mouse.Button2Up:Connect(function()
 end)
 
 UI.InputBegan:Connect(function(ya, yya)
-	if not yya and ya.KeyCode == CameraSettings.togglekey then
-		CameraSettings.enabled = not CameraSettings.enabled
-		if CameraSettings.enabled then
+	if not yya then
+		if ya.KeyCode == CameraSettings.togglekey then
+			CameraSettings.enabled = not CameraSettings.enabled
+			if CameraSettings.enabled then
+				StarterGui:SetCore("SendNotification", {
+					Title = "Toggle";
+					Text = "Aimbot: true"
+				})
+			else
+				StarterGui:SetCore("SendNotification", {
+					Title = "Toggle";
+					Text = "Aimbot: false"
+				})
+			end
+		elseif ya.KeyCode == Enum.KeyCode.P then
 			StarterGui:SetCore("SendNotification", {
-				Title = "Toggle";
-				Text = "Aimbot: true"
+				Title = "Keybinds";
+				Text = "(+) Increase Tween Time, (-) Decrease Tween Time, (]) Increase Prediction, ([) Decrease Prediction. (GOES IN INCREMENTS OF .1!)"
 			})
-		else
+		elseif ya.KeyCode == Enum.KeyCode.Equals then
+			CameraSettings.tweentime += 0.05
 			StarterGui:SetCore("SendNotification", {
-				Title = "Toggle";
-				Text = "Aimbot: false"
+				Title = "Tween Time";
+				Text = "Time: "..CameraSettings.tweentime
 			})
+		elseif ya.KeyCode == Enum.KeyCode.Minus then
+			CameraSettings.tweentime -= 0.05
+			StarterGui:SetCore("SendNotification", {
+				Title = "Tween Time";
+				Text = "Time: "..CameraSettings.tweentime
+			})
+		elseif ya.KeyCode == Enum.KeyCode.LeftBracket then
+			CameraSettings.predictionmult += 0.05
+			StarterGui:SetCore("SendNotification", {
+				Title = "Prediction";
+				Text = "Multiplier: "..CameraSettings.predictionmult
+			})
+		elseif ya.KeyCode == Enum.KeyCode.RightBracket then
+			CameraSettings.predictionmult -= 0.05
+			StarterGui:SetCore("SendNotification", {
+				Title = "Prediction";
+				Text = "Multiplier: "..CameraSettings.predictionmult
+			})
+		elseif ya.KeyCode == Enum.KeyCode.KeypadPlus then
+			CameraSettings.distanceforlock += 15
+			StarterGui:SetCore("SendNotification", {
+				Title = "Size";
+				Text = "Multiplier: "..CameraSettings.distanceforlock
+			})
+		elseif ya.KeyCode == Enum.KeyCode.KeypadMinus then
+			CameraSettings.distanceforlock -= 15
+			StarterGui:SetCore("SendNotification", {
+				Title = "Size";
+				Text = "Multiplier: "..CameraSettings.distanceforlock
+			})
+		elseif ya.KeyCode == Enum.KeyCode.U then
+			if Vis == false then
+				Vis = true
+				CameraSettings.imagetrans = 0.95
+				StarterGui:SetCore("SendNotification", {
+					Title = "Circle";
+					Text = "Visible"
+				})
+			else
+				Vis = false
+				CameraSettings.imagetrans = 1
+				StarterGui:SetCore("SendNotification", {
+					Title = "Circle";
+					Text = "Invisible"
+				})
+			end
 		end
 	end
 end)
@@ -151,11 +300,23 @@ end
 ]]
 
 RE.RenderStepped:Connect(function(dt)
+	ImageLabel.ImageTransparency = CameraSettings.imagetrans
+	ImageLabel.Position = UDim2.fromOffset(Mouse.X, Mouse.Y)
+	ImageLabel.Size = UDim2.new(0, ((CameraSettings.distanceforlock + 15) * 2), 0, ((CameraSettings.distanceforlock + 15) * 2))
+	if CameraSettings.tweentime < 0 then
+		CameraSettings.tweentime = 0
+	end
+	if CameraSettings.predictionmult < 0 then
+		CameraSettings.predictionmult = 0
+	end
+	if CameraSettings.distanceforlock < 0 then
+		CameraSettings.distanceforlock = 0
+	end
 	if CameraSettings.enabled then
 		local ClosestPlayer = GetClosestPlayer()
 		if ClosestPlayer[2] ~= nil and ClosestPlayer[2]:FindFirstChild(CameraSettings.parttolockon) and MouseDown then
 			--Camera.CFrame = CFrame.lookAt(Camera.CFrame.p, ClosestPlayer[2]:FindFirstChild(CameraSettings.parttolockon).Position + ClosestPlayer[2]:FindFirstChild(CameraSettings.parttolockon).Velocity/CameraSettings.predictionmult)
-			CTween = TS:Create(Camera, TweenInfo.new(CameraSettings.tweentime, Enum.EasingStyle.Cubic), {
+			CTween = TS:Create(Camera, TweenInfo.new(CameraSettings.tweentime, Enum.EasingStyle.Circular), {
 				CFrame = CFrame.lookAt(Camera.CFrame.p, ClosestPlayer[2]:FindFirstChild(CameraSettings.parttolockon).Position + (ClosestPlayer[2]:FindFirstChild(CameraSettings.parttolockon).Velocity/CameraSettings.predictionmult)),
 			})
 			CTween:Play();
