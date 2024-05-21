@@ -609,7 +609,6 @@ local function PreparePart(self)
     self.Center2D = NewV2(MaxX + MinX, MaxY + MinY) / 2;
     self.MinX, self.MinY, self.MaxX, self.MaxY = MinX, MinY, MaxX, MaxY;
     self.CFrame = PartCF;
-    
     self.CrosshairCenter3D = (PartCF * self.CrosshairOffset).Position;
     self.CrosshairCenter2D, self.CrosshairOnScreen = ToScreenPoint(Camera, self.CrosshairCenter3D);
     self.CrosshairCenter2D = V3ToV2(self.CrosshairCenter2D);
@@ -697,7 +696,6 @@ local function PrepareCharacter(self)
     self.Min2DPoint, self.Max2DPoint = NewV2(MinX, MinY), NewV2(MaxX, MaxY);
     self.Center2D = NewV2(MaxX + MinX, MaxY + MinY) / 2;
     self.MinX, self.MinY, self.MaxX, self.MaxY = MinX, MinY, MaxX, MaxY;
-    
     self.CrosshairCenter3D = (CharacterCF * self.CrosshairOffset).Position;
     self.CrosshairCenter2D, self.CrosshairOnScreen = ToScreenPoint(Camera, self.CrosshairCenter3D);
     self.CrosshairCenter2D = V3ToV2(self.CrosshairCenter2D);
@@ -1039,7 +1037,7 @@ local function SetupHighlightESP(self)
     if (self.Highlight) then return self.Highlight; end;
     SetupViewport();
     self.FillOpacity = 0.5;
-    local Highlight = Instance.new("Highlight", Viewport);
+    local Highlight = Instance.new("Highlight", self.Instance);
     Highlight.Adornee = self.Instance;
     self.Highlight = Highlight;
     return Highlight;
@@ -1053,8 +1051,8 @@ function ESPs.Highlight:Render()
     Highlight.OutlineTransparency = Transparency;
     Highlight.FillTransparency = FillTransparency;
     Highlight.Adornee = self.Instance;
-    Highlight.Parent = nil;
-    Highlight.Parent = Viewport;
+   --[[ Highlight.Parent = nil;
+    Highlight.Parent = Viewport;]]
 end;
 --#endregion
 --#endregion
