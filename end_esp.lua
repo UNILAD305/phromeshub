@@ -609,7 +609,7 @@ local function PreparePart(self)
     self.Center2D = NewV2(MaxX + MinX, MaxY + MinY) / 2;
     self.MinX, self.MinY, self.MaxX, self.MaxY = MinX, MinY, MaxX, MaxY;
     self.CFrame = PartCF;
-    self.Velocity = Part.Velocity
+    --self.Velocity = Part.Velocity
     self.CrosshairCenter3D = (PartCF * self.CrosshairOffset).Position;
     self.CrosshairCenter2D, self.CrosshairOnScreen = ToScreenPoint(Camera, self.CrosshairCenter3D);
     self.CrosshairCenter2D = V3ToV2(self.CrosshairCenter2D);
@@ -653,7 +653,6 @@ local function PrepareModel(self)
     self.Min2DPoint, self.Max2DPoint = NewV2(MinX, MinY), NewV2(MaxX, MaxY);
     self.Center2D = NewV2(MaxX + MinX, MaxY + MinY) / 2;
     self.MinX, self.MinY, self.MaxX, self.MaxY = MinX, MinY, MaxX, MaxY;
-    self.Velocity = Part.Velocity
     self.CrosshairCenter3D = (ModelCF * self.CrosshairOffset).Position;
     self.CrosshairCenter2D, self.CrosshairOnScreen = ToScreenPoint(Camera, self.CrosshairCenter3D);
     self.CrosshairCenter2D = V3ToV2(self.CrosshairCenter2D);
@@ -698,7 +697,7 @@ local function PrepareCharacter(self)
     self.Min2DPoint, self.Max2DPoint = NewV2(MinX, MinY), NewV2(MaxX, MaxY);
     self.Center2D = NewV2(MaxX + MinX, MaxY + MinY) / 2;
     self.MinX, self.MinY, self.MaxX, self.MaxY = MinX, MinY, MaxX, MaxY;
-    self.Velocity = Part.Velocity
+    --self.Velocity = Part.Velocity
     self.CrosshairCenter3D = (CharacterCF * self.CrosshairOffset).Position;
     self.CrosshairCenter2D, self.CrosshairOnScreen = ToScreenPoint(Camera, self.CrosshairCenter3D);
     self.CrosshairCenter2D = V3ToV2(self.CrosshairCenter2D);
