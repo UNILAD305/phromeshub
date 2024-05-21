@@ -609,8 +609,7 @@ local function PreparePart(self)
     self.Center2D = NewV2(MaxX + MinX, MaxY + MinY) / 2;
     self.MinX, self.MinY, self.MaxX, self.MaxY = MinX, MinY, MaxX, MaxY;
     self.CFrame = PartCF;
-    self.PartVelocity = Part.Velocity
-    self.CrosshairCenter3D = (PartCF * self.CrosshairOffset).Position;
+    self.CrosshairCenter3D = {(PartCF * self.CrosshairOffset).Position, Part.Velocity};
     self.CrosshairCenter2D, self.CrosshairOnScreen = ToScreenPoint(Camera, self.CrosshairCenter3D);
     self.CrosshairCenter2D = V3ToV2(self.CrosshairCenter2D);
     if (not self.RenderState) then
