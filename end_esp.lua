@@ -4,6 +4,8 @@
 
 --#region Setup
 --//Services\\--
+print("0")
+
 local UserInputService = game:GetService("UserInputService");
 local RunService = game:GetService("RunService");
 local GuiService = game:GetService("GuiService");
