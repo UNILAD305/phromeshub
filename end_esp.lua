@@ -5,8 +5,8 @@
 --#region Setup
 --//Services\\--
 local UserInputService = game:GetService("UserInputService");
+local RunService = game:GetService("RunService");
 local GuiService = game:GetService("GuiService");
-local Workspace = game:GetService("Workspace");
 local CoreGui = game:GetService("CoreGui");
 local Players = game:GetService("Players");
 
@@ -25,7 +25,7 @@ local NewCF = CFrame.new;
 local EmptyCF = NewCF();
 local Viewport, MouseUnlocker, SetupViewport, BulletSource;
 --//DataModel Stack Declaration\\--
-local Camera, Raycast = Workspace.CurrentCamera, Workspace.Raycast;
+local Camera, Raycast = workspace.CurrentCamera, workspace.Raycast;
 local ToScreenPoint = Camera.WorldToViewportPoint;
 --//Events\\--
 local PostRender = Instance.new("BindableEvent");
@@ -564,7 +564,7 @@ WallPenRaycast = function(P0, P1, Target, PassCount)
 	local Delta = (P1 - P0);
 	if (Delta.Magnitude > 5e3) then return "Negative"; end;--Target is too far.
 	local RaycastParams = DendroESP.RaycastParams;
-	local Cast = Raycast(Workspace, P0, Delta, RaycastParams);
+	local Cast = Raycast(workspace, P0, Delta, RaycastParams);
 	--If it hit nothing, and it's the first pass, return "Positive".
 	--If it's not the first pass, return "Neutral".
 	if (not Cast) then return (PassCount == 0 and "Positive") or "Neutral"; end;
@@ -577,7 +577,7 @@ WallPenRaycast = function(P0, P1, Target, PassCount)
 	if (WallPenThickness == 0) then return "Negative"; end;
 	Delta = Delta.Unit;
 	local P2 = Cast.Position + Delta * WallPenThickness;
-	Cast = Raycast(Workspace, P2, -Delta, RaycastParams);
+	Cast = Raycast(workspace, P2, -Delta, RaycastParams);
 	if (not Cast or PassCount >= 5) then return "Negative"; end;
 	return WallPenRaycast(Cast.Position, P1, Target, PassCount + 1);
 end;
@@ -906,7 +906,7 @@ end;
 --#region Shadow
 local function ProjectPoint(Point, Source)
 	local Direction = (Point - Source).Unit * 5000;
-	local Raycast = Raycast(Workspace, Source, Direction, DendroESP.RaycastParams);
+	local Raycast = Raycast(workspace, Source, Direction, DendroESP.RaycastParams);
 	return (Raycast and Raycast.Position) or Source + Direction;
 end;
 
@@ -944,7 +944,7 @@ end;
 function ESPs.Shadow:Render()
 	local Thickness, Transparency, Color = self.Thickness, 1 - self.Opacity, self.CurrentColor;
 	local Source = ((self.Part and self.Part.CFrame) or self.CharacterCF).Position;
-	if (Raycast(Workspace, BulletSource, (Source - BulletSource), DendroESP.RaycastParams)) then
+	if (Raycast(workspace, BulletSource, (Source - BulletSource), DendroESP.RaycastParams)) then
 		return ESPs.Outline.Render(self);
 	end;
 	if (self.Type == "Part") then
@@ -1131,12 +1131,12 @@ if (CoreGui:FindFirstChild("DendroESP")) then CoreGui.DendroESP:Destroy(); end;
 SetupViewport();
 DendroESP.MousePos = GetMousePos();
 _G.DendroESP = DendroESP;
-_G.DendroESPConnection = game:GetService("RunService").RenderStepped:Connect(function()
+_G.DendroESPConnection = RunService.RenderStepped:Connect(function()
 	--//Preparing\\--
 	local MousePos = GetMousePos();
 	DendroESP.MousePos = MousePos;
 	NonNegativeTables = {};
-	Camera = Workspace.CurrentCamera;
+	Camera = workspace.CurrentCamera;
 	BulletSource = GetBulletSource();
 	DendroESP.TracerSource = NewV2(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y);
 	--//Rendering\\--
