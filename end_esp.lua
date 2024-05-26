@@ -10,6 +10,8 @@ local GuiService = game:GetService("GuiService");
 local CoreGui = game:GetService("CoreGui");
 local Players = game:GetService("Players");
 
+print("1")
+
 local LPlayer = Players.LocalPlayer;
 local Mouse = LPlayer:GetMouse();
 --//ENV Stack Declaration\\--
@@ -97,6 +99,8 @@ function DendroESP:MoveMouse(X, Y)
 	local DPI = self:GetDPI();
 	mousemoverel(X * DPI, Y * DPI);
 end;
+
+print("2")
 
 function DendroESP:MouseMoveTo(X, Y)
 	local DPI = self:GetDPI();
@@ -187,6 +191,8 @@ local function GetCharacterVertices(CF)
 		{CF * NewCF(-2, 1, 0).Position,  CF * NewCF(-0.5, 1, 0).Position};
 	}
 end;
+
+print("3")
 
 local function GetEdges(Part)
 	local Corners = GetCorners(Part);
@@ -1131,6 +1137,9 @@ if (CoreGui:FindFirstChild("DendroESP")) then CoreGui.DendroESP:Destroy(); end;
 SetupViewport();
 DendroESP.MousePos = GetMousePos();
 _G.DendroESP = DendroESP;
+
+print("boot")
+
 _G.DendroESPConnection = RunService.RenderStepped:Connect(function()
 	--//Preparing\\--
 	local MousePos = GetMousePos();
@@ -1183,6 +1192,8 @@ _G.DendroESPConnection = RunService.RenderStepped:Connect(function()
 	end;
 	mousemoverel(Delta.X, Delta.Y);
 end);
+
+print("boooooooot")
 --#endregion
 
 return DendroESP;
