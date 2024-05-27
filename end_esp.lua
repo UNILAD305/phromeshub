@@ -1043,7 +1043,7 @@ end;
 local function SetupHighlightESP(self)
 	if (self.Highlight) then return self.Highlight; end;
 	SetupViewport();
-	self.FillOpacity = 0.5;
+	self.FillOpacity = 0;
 	local Highlight = Instance.new("Highlight", self.Instance);
 	Highlight.Adornee = self.Instance;
 	self.Highlight = Highlight;
