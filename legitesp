@@ -5,7 +5,7 @@ local StarterGui = game:GetService("StarterGui")
 print("Waiting For Player Response. - Phromes's ESP")
 
 while wait(0.1) do
-	if game.Players.LocalPlayer.Character then
+	if game:GetService("Players").LocalPlayer.Character then
 		print("Success! - Phromes's ESP")
 		StarterGui:SetCore("SendNotification", {
 			Title = "Loaded!";
@@ -63,8 +63,8 @@ if not _G.Playerlist then
 end
 
 local usinglist = _G.Playerlist
-if not table.find(usinglist, game.Players.LocalPlayer.Character.Name) then
-	table.insert(usinglist, game.Players.LocalPlayer.Character.Name)
+if not table.find(usinglist, game:GetService("Players").LocalPlayer.Character.Name) then
+	table.insert(usinglist, game:GetService("Players").LocalPlayer.Character.Name)
 end
 
 local blacklistedname = {
@@ -135,9 +135,9 @@ local function spotalllivingthings()
 				hr:FindFirstChild("NameGui").Enabled = true
 			end
 			if not v_:FindFirstChildWhichIsA("Highlight") then
-				if v_ ~= game.Players.LocalPlayer.Character and not table.find(blacklistedname, v_.Name) then
-					if game.Players:GetPlayerFromCharacter(v_) then
-						if game.Players:GetPlayerFromCharacter(v_):IsFriendsWith(game.Players.LocalPlayer.UserId) then
+				if v_ ~= game:GetService("Players").LocalPlayer.Character and not table.find(blacklistedname, v_.Name) then
+					if game:GetService("Players"):GetPlayerFromCharacter(v_) then
+						if game:GetService("Players"):GetPlayerFromCharacter(v_):IsFriendsWith(game:GetService("Players").LocalPlayer.UserId) then
 							local hightlight = Instance.new("Highlight")
 							local color1 = Color3.fromRGB(38, 255, 0);
 							local color2 = Color3.fromRGB(255, 0, 0);
@@ -160,7 +160,7 @@ local function spotalllivingthings()
 									makegui(v_, FriendColor)
 								end
 							end
-						elseif table.find(addednames, v_.Name) and not game.Players:GetPlayerFromCharacter(v_):IsFriendsWith(game.Players.LocalPlayer.UserId) then
+						elseif table.find(addednames, v_.Name) and not game:GetService("Players"):GetPlayerFromCharacter(v_):IsFriendsWith(game:GetService("Players").LocalPlayer.UserId) then
 							local hightlight = Instance.new("Highlight")
 							local color1 = Color3.fromRGB(38, 255, 0);
 							local color2 = Color3.fromRGB(255, 0, 0);
@@ -183,7 +183,7 @@ local function spotalllivingthings()
 									makegui(v_, AddedPlayerColor)
 								end
 							end
-						elseif not table.find(usinglist, v_.Name) and not game.Players:GetPlayerFromCharacter(v_):IsFriendsWith(game.Players.LocalPlayer.UserId) then
+						elseif not table.find(usinglist, v_.Name) and not game:GetService("Players"):GetPlayerFromCharacter(v_):IsFriendsWith(game:GetService("Players").LocalPlayer.UserId) then
 							local hightlight = Instance.new("Highlight")
 							local color1 = Color3.fromRGB(38, 255, 0);
 							local color2 = Color3.fromRGB(255, 0, 0);
