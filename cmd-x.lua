@@ -807,7 +807,7 @@ end
 
 local AudioIds = {5032588119}
 
-if AntiCheat.IntroAudioOff == false then
+--[[if AntiCheat.IntroAudioOff == false then
 	local Sound2 = Instance.new("Sound", nil)
 	local c = getconnections(game:GetService("PolicyService").ChildAdded)
 	for i,v in pairs(c) do v:Disable() end
@@ -816,7 +816,7 @@ if AntiCheat.IntroAudioOff == false then
 	Sound2.Name = "19324854"
 	Sound2.SoundId = "http://www.roblox.com/asset/?id="..AudioIds[1]
 	Sound2:Play()
-end
+end]]
 
 holder = Instance.new("Frame", getParent)
 holder.Visible = false
