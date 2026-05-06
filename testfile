@@ -752,167 +752,67 @@ Your response (single letter only, no other text):`;
                 }
             };
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`; // this is the free model. if you pay for gemini you can upgrade this.
+                const url = 'http://localhost:11434/api/chat';
 
-            log('Querying Gemini' + (images.length > 0 ? ' with vision' : ''));
+        log('Querying Local Ollama' + (images.length > 0 ? ' with vision' : ''));
 
-            GM_xmlhttpRequest({
-                method: 'POST',
-                url: url,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                data: JSON.stringify(requestData),
-                onload: function (response) {
-                    try {
-                        log(`API Response Status: ${response.status}`);
-                        if (response.status !== 200) {
-                            logError('Non-200 response status:', response.status);
-                            logError('Response text:', response.responseText);
-                        }
-                        const data = JSON.parse(response.responseText);
-
-                        if (data.error) {
-                            logError('API Error:', data.error);
-                            reject(new Error(data.error.message));
-                            return;
-                        }
-
-                        if (data.candidates && data.candidates.length > 0) {
-                            const candidate = data.candidates[0];
-                            let answer = null;
-
-                            if (candidate.content && candidate.content.parts) {
-                                if (Array.isArray(candidate.content.parts) && candidate.content.parts.length > 0) {
-                                    const part = candidate.content.parts[0];
-                                    if (part && part.text) {
-                                        answer = part.text;
-                                    }
-                                }
-                            }
-
-                            if (answer) {
-                                log('Full response text:', answer);
-
-                                const upper = answer.toUpperCase().trim();
-
-                                const lastPart = upper.slice(-100);
-
-                                const explicitPatterns = [
-                                    /(?:THE\s+)?(?:CORRECT\s+)?(?:ANSWER\s+)?(?:IS\s+)?([A-Z])(?:\s*)$/i,
-                                    /(?:ANSWER\s*:?\s*)([A-Z])(?:\s*)$/i,
-                                    /(?:CHOICE\s*:?\s*)([A-Z])(?:\s*)$/i,
-                                    /(?:OPTION\s*:?\s*)([A-Z])(?:\s*)$/i,
-                                    /(?:CORRECT\s+)?(?:ANSWER|CHOICE|OPTION)\s+([A-Z])(?:\s*)$/i
-                                ];
-
-                                let extractedLetter = null;
-
-                                for (const pattern of explicitPatterns) {
-                                    const match = lastPart.match(pattern);
-                                    if (match && match[1] && availableLetters.includes(match[1])) {
-                                        extractedLetter = match[1];
-                                        log('Extracted answer from explicit pattern at end:', extractedLetter);
-                                        break;
-                                    }
-                                }
-
-                                if (!extractedLetter) {
-                                    for (const pattern of explicitPatterns) {
-                                        const match = upper.match(pattern);
-                                        if (match && match[1] && availableLetters.includes(match[1])) {
-                                            extractedLetter = match[1];
-                                            log('Extracted answer from explicit pattern:', extractedLetter);
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                if (!extractedLetter) {
-                                    const endLetterMatch = upper.match(/([A-Z])\s*$/);
-                                    if (endLetterMatch && endLetterMatch[1] && availableLetters.includes(endLetterMatch[1])) {
-                                        extractedLetter = endLetterMatch[1];
-                                        log('Extracted answer from last character:', extractedLetter);
-                                    }
-                                }
-
-                                if (!extractedLetter && upper.length < 50) {
-                                    const startMatch = upper.match(/^([A-Z])(?:\s|$|[\.\,])/);
-                                    if (startMatch && startMatch[1] && availableLetters.includes(startMatch[1])) {
-                                        extractedLetter = startMatch[1];
-                                        log('Extracted answer from start (short response):', extractedLetter);
-                                    }
-                                }
-
-                                if (!extractedLetter) {
-                                    const allLetters = upper.match(/[A-Z]/g) || [];
-                                    for (let i = allLetters.length - 1; i >= 0; i--) {
-                                        if (availableLetters.includes(allLetters[i])) {
-                                            extractedLetter = allLetters[i];
-                                            log('Extracted answer from last valid letter (fallback):', extractedLetter);
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                if (allowMultiple) {
-                                    const matches = upper.match(/[A-Z]/g) || [];
-                                    const unique = Array.from(new Set(matches));
-                                    const selected = unique.filter(l => availableLetters.includes(l));
-                                    if (selected.length > 0) {
-                                        log('Extracted multiple answers:', selected.join(', '));
-                                        resolve(selected);
-                                    } else {
-                                        reject(new Error('No valid answer letters in response'));
-                                    }
-                                } else {
-                                    if (extractedLetter) {
-                                        log('Extracted answer:', extractedLetter);
-                                        resolve(extractedLetter);
-                                    } else {
-                                        reject(new Error('No valid answer letter in response'));
-                                    }
-                                }
-                            } else {
-                                logError('No text in response');
-
-                                if (candidate.finishReason === 'SAFETY') {
-                                    reject(new Error('Response blocked by safety filter'));
-                                } else if (candidate.finishReason === 'MAX_TOKENS') {
-                                    reject(new Error('MAX_TOKENS issue'));
-                                } else {
-                                    reject(new Error(`No text (finish: ${candidate.finishReason})`));
-                                }
-                            }
-                        } else {
-                            let errorMessage = 'No candidates';
-                            if (data.promptFeedback) {
-                                logError('Prompt feedback:', data.promptFeedback);
-                                if (data.promptFeedback.blockReason) {
-                                    const blockReason = data.promptFeedback.blockReason;
-                                    logError('Block reason:', blockReason);
-                                        errorMessage = `Content blocked: ${blockReason}`;
-
-                                        if (data.promptFeedback.safetyRatings) {
-                                        logError('Safety ratings:', data.promptFeedback.safetyRatings);
-                                    }
-                                }
-                            }
-                            if (data.error) {
-                                logError('API error in response:', data.error);
-                            }
-                            reject(new Error(errorMessage));
-                        }
-                    } catch (e) {
-                        logError('Parse error:', e);
-                        reject(e);
-                    }
-                },
-                onerror: function (error) {
-                    logError('Request error:', error);
-                        reject(error);
+        GM_xmlhttpRequest({
+            method: 'POST',
+            url: url,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify({
+                model: 'llava', // llava is required for your Apex images/graphs
+                messages: [{
+                    role: 'user',
+                    content: prompt // Your script already adds images to this prompt
+                }],
+                stream: false,
+                options: {
+                    temperature: 0.2 // Keeps answers consistent
                 }
-            });
+            }),
+            onload: function (response) {
+                try {
+                    log(`Ollama Status: ${response.status}`);
+                    if (response.status !== 200) {
+                        logError('Ollama error status:', response.status);
+                        reject(new Error("Ollama error: " + response.status));
+                        return;
+                    }
+
+                    const data = JSON.parse(response.responseText);
+                    const aiContent = data.message.content;
+
+                    if (!aiContent) {
+                        logError('Ollama returned empty content');
+                        reject(new Error("Empty AI response"));
+                        return;
+                    }
+
+                    let answer = null;
+                    // This matches your original script's logic to find the letter A, B, C, or D
+                    const match = aiContent.match(/\b([A-D])\b/i);
+                    if (match) {
+                        answer = match[1].toUpperCase();
+                        log(`AI selected choice: ${answer}`);
+                    } else {
+                        log('AI gave an explanation but no clear letter. Full response: ' + aiContent);
+                    }
+
+                    resolve(answer);
+
+                } catch (e) {
+                    logError('Error parsing Ollama response:', e);
+                    reject(e);
+                }
+            },
+            onerror: function (err) {
+                logError('Connection to Ollama failed. Is it running?', err);
+                reject(new Error("Ollama connection failed"));
+            }
+        });
         });
     }
 
