@@ -10,7 +10,7 @@
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setValue
 // @grant        GM_getValue
-// @connect      generativelanguage.googleapis.com
+// @connect      localhost
 // @run-at       document-end
 // @license      MIT
 // ==/UserScript==
@@ -678,143 +678,47 @@
         }
     }
 
-    function queryGemini(question, answers, images, allowMultiple) {
+    async function queryGemini(question, answers, images, allowMultiple) {
+        const prompt = `You are an expert tutor. Solve this Apex Learning question. ${images.length > 0 ? "Use the provided images to help." : ""} Respond with ONLY the letter (A, B, C, or D) of the correct answer. 
+        Question: ${question}
+        Choices: ${answers.join(", ")}`;
+
+        log('Querying Local Ollama (Llava)...');
+
         return new Promise((resolve, reject) => {
-            if (!GEMINI_API_KEY || GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
-                reject(new Error('No API key configured'));
-                return;
-            }
+            GM_xmlhttpRequest({
+                method: 'POST',
+                url: 'http://localhost:11434/api/chat',
+                headers: { 'Content-Type': 'application/json' },
+                data: JSON.stringify({
+                    model: 'llava',
+                    messages: [{ role: 'user', content: prompt }],
+                    stream: false
+                }),
+                onload: function(response) {
+                    try {
+                        const data = JSON.parse(response.responseText);
+                        const aiContent = data.message.content.trim();
+                        
+                        // Extract the letter A, B, C, or D
+                        const match = aiContent.match(/\b([A-D])\b/i);
+                        const finalAnswer = match ? match[1].toUpperCase() : null;
 
-            const answerList = answers.map(a => `${a.letter} ${a.text}`).join('\n');
-            const availableLetters = Array.from(new Set(answers.map(a => a.letter.replace(/[^A-Z]/gi, '').trim().toUpperCase()).filter(Boolean)));
-
-            const currentCourseTitle = getCourseTitle();
-
-            let prompt = `You are solving problems from a standard US high school course. Use your full reasoning ability to understand the problem, but your final answer must match what a careful high school teacher and official answer key would mark correct for this course. Base your reasoning on the facts, methods, and conventions that a strong high school student is expected to use. Avoid exotic or nonstandard interpretations that would not appear in a normal high school solution. Always think through the problem step by step, and then double-check your final choice against all of the given information before you answer. `;
-
-            if (currentCourseTitle) {
-                prompt += `The question is from the course "${currentCourseTitle}". Use reasoning and examples that match this specific high school subject and its usual curriculum. `;
-            }
-
-            if (images.length > 0) {
-                prompt += `IMPORTANT: ${images.length} image(s) will be provided BEFORE the question text. These images are part of the QUESTION and contain diagrams, charts, geometric figures, graphs, or other visual information needed to answer. Analyze these images carefully as they are essential to understanding the problem. `;
-            }
-
-            if (allowMultiple) {
-                prompt += `You are answering a "select all that apply" multiple-choice question.
-
-CRITICAL: Your response must contain ONLY the letter(s) of the correct answer(s) from this list: ${availableLetters.join(', ')}. Do NOT include any explanations, reasoning, calculations, or other text. Output ONLY the letter(s) separated by commas or spaces.
-
-Question: ${question}
-
-Answer Options:
-${answerList}
-
-Your response (letters only, no other text):`;
-            } else {
-                prompt += `You are answering a single-choice multiple-choice question.
-
-CRITICAL: Your response must contain ONLY the single letter of the correct answer from this list: ${availableLetters.join(', ')}. Do NOT include any explanations, reasoning, calculations, or other text. Output ONLY the single letter.
-
-Question: ${question}
-
-Answer Options:
-${answerList}
-
-Your response (single letter only, no other text):`;
-            }
-
-            const parts = [];
-
-            // Add images FIRST, then text prompt
-            if (images.length > 0) {
-                log(`Including ${images.length} optimized image(s) in request`);
-                images.forEach((img) => {
-                    parts.push({
-                        inline_data: {
-                            mime_type: img.mimeType,
-                            data: img.data
-                        }
-                    });
-                });
-            }
-
-            parts.push({ text: prompt });
-
-            const requestData = {
-                contents: [{
-                    parts: parts
-                }],
-                generationConfig: {
-                    temperature: 0.1,
-                    topP: 0.2,
-                    topK: 1
-                }
-            };
-
-                const url = 'http://localhost:11434/api/chat';
-
-        log('Querying Local Ollama' + (images.length > 0 ? ' with vision' : ''));
-
-        GM_xmlhttpRequest({
-            method: 'POST',
-            url: url,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: JSON.stringify({
-                model: 'llava', // llava is required for your Apex images/graphs
-                messages: [{
-                    role: 'user',
-                    content: prompt // Your script already adds images to this prompt
-                }],
-                stream: false,
-                options: {
-                    temperature: 0.2 // Keeps answers consistent
-                }
-            }),
-            onload: function (response) {
-                try {
-                    log(`Ollama Status: ${response.status}`);
-                    if (response.status !== 200) {
-                        logError('Ollama error status:', response.status);
-                        reject(new Error("Ollama error: " + response.status));
-                        return;
+                        log(`Ollama Answer: ${finalAnswer}`);
+                        resolve(finalAnswer);
+                    } catch (e) {
+                        logError('Parse error', e);
+                        reject(e);
                     }
-
-                    const data = JSON.parse(response.responseText);
-                    const aiContent = data.message.content;
-
-                    if (!aiContent) {
-                        logError('Ollama returned empty content');
-                        reject(new Error("Empty AI response"));
-                        return;
-                    }
-
-                    let answer = null;
-                    // This matches your original script's logic to find the letter A, B, C, or D
-                    const match = aiContent.match(/\b([A-D])\b/i);
-                    if (match) {
-                        answer = match[1].toUpperCase();
-                        log(`AI selected choice: ${answer}`);
-                    } else {
-                        log('AI gave an explanation but no clear letter. Full response: ' + aiContent);
-                    }
-
-                    resolve(answer);
-
-                } catch (e) {
-                    logError('Error parsing Ollama response:', e);
-                    reject(e);
+                },
+                onerror: (err) => {
+                    logError('Ollama Connection Failed. Is it running?', err);
+                    reject(err);
                 }
-            },
-            onerror: function (err) {
-                logError('Connection to Ollama failed. Is it running?', err);
-                reject(new Error("Ollama connection failed"));
-            }
-        });
+            });
         });
     }
+
 
     function removeHighlights() {
         document.querySelectorAll('.sia-distractor').forEach(el => {
